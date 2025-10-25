@@ -10,4 +10,5 @@ export default function ErrorMessage({ message }) {
 
 ErrorMessage.propTypes = {
   message: PropTypes.string.isRequired,
+  onRetry: PropTypes.func
 };

@@ -1,20 +1,16 @@
-import { createContext, useContext, useReducer, useEffect, useMemo } from 'react'; // NEW: add useMemo
+import { createContext, useContext, useReducer, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { CART } from '../utils/constants'; // NEW: import constants
 
 const CartContext = createContext(null);
 
 const initialState = {
-  items: [],
-  totalItems: 0,
-  totalPrice: 0
+  items: []
 };
 
 function cartReducer(state, action) {
   switch (action.type) {
     case 'ADD_TO_CART': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
-      
       const items = existingItem
         ? state.items.map(item =>
             item.id === action.payload.id
@@ -22,39 +18,24 @@ function cartReducer(state, action) {
               : item
           )
         : [...state.items, { ...action.payload, quantity: 1 }];
-
-      return {
-        ...state,
-        items,
-        totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
-        totalPrice: items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-      };
+      return { ...state, items };
     }
 
-    case 'REMOVE_FROM_CART': {
-      const items = state.items.filter(item => item.id !== action.payload);
+    case 'REMOVE_FROM_CART':
       return {
         ...state,
-        items,
-        totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
-        totalPrice: items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        items: state.items.filter(item => item.id !== action.payload)
       };
-    }
 
-    case 'UPDATE_QUANTITY': {
-      const items = state.items.map(item =>
-        item.id === action.payload.id
-          ? { ...item, quantity: action.payload.quantity }
-          : item
-      );
-
+    case 'UPDATE_QUANTITY':
       return {
         ...state,
-        items,
-        totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
-        totalPrice: items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        items: state.items.map(item =>
+          item.id === action.payload.id
+            ? { ...item, quantity: action.payload.quantity }
+            : item
+        )
       };
-    }
 
     case 'CLEAR_CART':
       return initialState;
@@ -67,32 +48,49 @@ function cartReducer(state, action) {
 export function CartProvider({ children }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // NEW: Add memoized calculations
   const cartStats = useMemo(() => ({
     totalItems: state.items.reduce((sum, item) => sum + item.quantity, 0),
     totalPrice: state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-    uniqueItems: state.items.length
+    totalWithTax: state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 1.1
   }), [state.items]);
 
-  useEffect(() => {
-    localStorage.setItem(CART.STORAGE_KEY, JSON.stringify({ ...state, ...cartStats }));
-  }, [state, cartStats]);
+  const value = useMemo(() => ({
+    state,
+    dispatch,
+    ...cartStats
+  }), [state, cartStats]);
 
   return (
-    <CartContext.Provider value={{ state, dispatch, cartStats }}>
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );
 }
 
 CartProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
+};
+
+// Add type validation for context value
+CartContext.displayName = 'CartContext';
+CartContext.propTypes = {
+  state: PropTypes.shape({
+    items: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      quantity: PropTypes.number.isRequired
+    })).isRequired
+  }).isRequired,
+  dispatch: PropTypes.func.isRequired,
+  totalItems: PropTypes.number.isRequired,
+  totalPrice: PropTypes.number.isRequired
 };
 
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error('useCart must be used within CartProvider');
   }
   return context;
 }

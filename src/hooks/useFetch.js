@@ -24,10 +24,10 @@ const useFetch = (url) => {
         setError(null);
       } catch (error) {
         if (error.name === 'AbortError') {
-          console.log('Fetch aborted');
-        } else {
-          setError(error.message);
+          // Silently handle abort
+          return;
         }
+        setError(error.message);
       } finally {
         setLoading(false);
       }

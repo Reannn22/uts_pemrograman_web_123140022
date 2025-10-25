@@ -1,29 +1,37 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard';
 import Loading from '../components/common/Loading';
-import { fetchProducts } from '../services/dummyApi';
+import ErrorMessage from '../components/common/ErrorMessage';
+import { useCart } from '../context/CartContext';
+import useFetch from '../hooks/useFetch';
+import PropTypes from 'prop-types';
 
-export default function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function HomePage({ featuredLimit = 8 }) {
+  const navigate = useNavigate();
+  const { dispatch } = useCart();
+  const { data, loading, error } = useFetch(`https://dummyjson.com/products?limit=${featuredLimit}`);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const data = await fetchProducts(8);
-        setFeaturedProducts(data.products);
-      } catch (error) {
-        console.error('Failed to fetch featured products:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // NEW: Add memoized featured products
+  const featuredProducts = useMemo(() => {
+    if (!data?.products) return [];
+    return data.products.map(product => ({
+      ...product,
+      isFeatured: product.rating >= 4.5
+    }));
+  }, [data]);
 
-    loadProducts();
-  }, []);
+  const handleViewAll = useCallback(() => {
+    navigate('/products');
+  }, [navigate]);
+
+  const handleQuickAdd = useCallback((product) => {
+    dispatch({ type: 'ADD_TO_CART', payload: product });
+  }, [dispatch]);
 
   if (loading) return <Loading />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!featuredProducts.length) return null;
 
   return (
     <div>
@@ -41,10 +49,26 @@ export default function HomePage() {
         <h2 className="text-2xl font-bold mb-8 text-center">Featured Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product}
+              onAddToCart={handleQuickAdd}
+            />
           ))}
+        </div>
+        <div className="text-center mt-8">
+          <button
+            onClick={handleViewAll}
+            className="btn btn-primary"
+          >
+            View All Products
+          </button>
         </div>
       </section>
     </div>
   );
 }
+
+HomePage.propTypes = {
+  featuredLimit: PropTypes.number
+};

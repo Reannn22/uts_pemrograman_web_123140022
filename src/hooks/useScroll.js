@@ -1,13 +1,22 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-export const useScroll = () => {
+export const useScroll = (threshold = 100) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = useCallback(() => {
+    setIsScrolled(window.scrollY > threshold);
+  }, [threshold]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const scrollToElement = useCallback((ref) => {
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
-
-  return { scrollToTop, scrollToElement };
+  return { isScrolled, scrollToTop };
 };
+
+export default useScroll;
