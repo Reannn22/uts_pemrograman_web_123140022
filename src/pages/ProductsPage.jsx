@@ -1,19 +1,30 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
+import { fetchProducts } from '../services/dummyApi';
 import useFetch from '../hooks/useFetch';
 import useDebounce from '../hooks/useDebounce';
 import ProductCard from '../components/product/ProductCard';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import PropTypes from 'prop-types';
+import { translations } from '../utils/translations'; // Adjust the import based on your project structure
 
 export default function ProductsPage({ initialSortBy = '', itemsPerPage = 20 }) {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const lang = searchParams.get('lang') || localStorage.getItem('lang') || 'id';
+  const { isDark } = useTheme();
   const searchInputRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('');
   const { dispatch } = useCart();
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const { data, loading, error } = useFetch('https://dummyjson.com/products');
+  const { data, loading, error } = useFetch(
+    `https://dummyjson.com/products?limit=${itemsPerPage}`
+  );
+  const pageTexts = translations[lang]?.productPage || {};
 
   // Focus search input on mount
   useEffect(() => {
@@ -69,43 +80,55 @@ export default function ProductsPage({ initialSortBy = '', itemsPerPage = 20 }) 
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="mb-6">
-        <input
-          ref={searchInputRef}
-          type="search"
-          placeholder="Search products..."
-          className="w-full p-2 border rounded"
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-        
-        <select 
-          value={sortBy} 
-          onChange={(e) => setSortBy(e.target.value)}
-          className="mt-2 p-2 border rounded"
-        >
-          <option value="">Sort by</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Rating</option>
-        </select>
-      </div>
-
-      <div className="mb-4 text-sm text-gray-600">
-        Found {stats.totalProducts} products | 
-        Average Price: ${stats.averagePrice.toFixed(2)} | 
-        Average Rating: {stats.averageRating.toFixed(1)}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredProducts.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={handleAddToCart}
+    <div className={`min-h-screen w-full py-8 ${
+      isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid gap-4 md:grid-cols-2 mb-6">
+          <input
+            ref={searchInputRef}
+            type="search"
+            placeholder={pageTexts.searchPlaceholder}
+            className={`w-full p-3 rounded-lg border ${
+              isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'
+            }`}
+            value={searchTerm}
+            onChange={handleSearch}
           />
-        ))}
+          
+          <select 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            className={`w-full p-3 rounded-lg border ${
+              isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'
+            }`}
+          >
+            <option value="">{pageTexts.sortBy}</option>
+            <option value="price-low">{pageTexts.priceLowHigh}</option>
+            <option value="price-high">{pageTexts.priceHighLow}</option>
+            <option value="rating">{pageTexts.rating}</option>
+          </select>
+        </div>
+
+        <div className={`mb-6 p-4 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+          <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            {pageTexts.foundProducts} {stats.totalProducts} products | 
+            {pageTexts.averagePrice}: ${stats.averagePrice.toFixed(2)} | 
+            {pageTexts.averageRating}: {stats.averageRating.toFixed(1)}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredProducts.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={handleAddToCart}
+              isDark={isDark}
+              lang={lang}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

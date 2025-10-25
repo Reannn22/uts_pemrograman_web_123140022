@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx}",
   ],
@@ -24,6 +25,9 @@ module.exports = {
       container: {
         center: true,
         padding: '1rem',
+      },
+      boxShadow: {
+        'lg-up': '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06)',
       },
     },
   },

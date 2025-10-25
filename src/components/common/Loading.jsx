@@ -9,7 +9,8 @@ export default function Loading({ size = 'md', className = '' }) {
 
   return (
     <div className={`flex justify-center items-center p-4 ${className}`}>
-      <div className={`animate-spin rounded-full border-4 border-primary-500 border-t-transparent ${sizeClasses[size]}`} />
+      <div
+      />
     </div>
   );
 }
