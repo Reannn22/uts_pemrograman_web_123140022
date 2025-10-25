@@ -1,5 +1,6 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect, useMemo } from 'react'; // NEW: add useMemo
 import PropTypes from 'prop-types';
+import { CART } from '../utils/constants'; // NEW: import constants
 
 const CartContext = createContext(null);
 
@@ -66,19 +67,19 @@ function cartReducer(state, action) {
 export function CartProvider({ children }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      dispatch({ type: 'RESTORE_CART', payload: JSON.parse(savedCart) });
-    }
-  }, []);
+  // NEW: Add memoized calculations
+  const cartStats = useMemo(() => ({
+    totalItems: state.items.reduce((sum, item) => sum + item.quantity, 0),
+    totalPrice: state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+    uniqueItems: state.items.length
+  }), [state.items]);
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(state));
-  }, [state]);
+    localStorage.setItem(CART.STORAGE_KEY, JSON.stringify({ ...state, ...cartStats }));
+  }, [state, cartStats]);
 
   return (
-    <CartContext.Provider value={{ state, dispatch }}>
+    <CartContext.Provider value={{ state, dispatch, cartStats }}>
       {children}
     </CartContext.Provider>
   );
