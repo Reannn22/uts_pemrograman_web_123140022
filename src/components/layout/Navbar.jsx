@@ -110,6 +110,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [lang, setLang] = useState(localStorage.getItem("lang") || "id");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const { state: cartState } = useCart();
   const { state: wishlistState } = useWishlist();
   const navigate = useNavigate();
@@ -211,6 +212,21 @@ export default function Navbar() {
       : "bg-white";
   };
 
+  // Add search handler function
+  const handleSearch = (value) => {
+    setSearchValue(value);
+    const params = new URLSearchParams(location.search);
+    if (value.trim()) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
+    navigate({
+      pathname: "/products",
+      search: params.toString(),
+    });
+  };
+
   // Update the main container and layout
   return (
     <>
@@ -241,6 +257,8 @@ export default function Navbar() {
                 isScrolled={isScrolled}
                 isDropdownOpen={isDropdownOpen}
                 setIsDropdownOpen={setIsDropdownOpen}
+                handleSearch={handleSearch}
+                searchValue={searchValue}
               />
             </div>
 
@@ -380,14 +398,19 @@ export default function Navbar() {
                 ))}
               </div>
 
-              {/* Search Bar for Mobile - Simplified */}
+              {/* Updated Mobile Search Bar */}
               <div className="mt-4 px-4">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder={
-                      navTexts.searchPlaceholder || "Search products..."
-                    }
+                    value={searchValue}
+                    onChange={(e) => {
+                      handleSearch(e.target.value);
+                      if (e.target.value.trim()) {
+                        setIsMenuOpen(false); // Close menu when searching
+                      }
+                    }}
+                    placeholder={navTexts.searchPlaceholder || "Search products..."}
                     className={`
                       w-full pl-10 pr-4 py-2 text-sm rounded-lg
                       ${
@@ -442,13 +465,13 @@ function NavLinks({
   isScrolled,
   isDropdownOpen,
   setIsDropdownOpen,
+  handleSearch,
+  searchValue,
 }) {
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [searchValue, setSearchValue] = useState("");
-  const itemRefs = useRef([]);
+  const itemRefs = useRef([]); // Add this line
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Memoize navTexts
   const navTexts = useMemo(() => translations[lang]?.navigation || {}, [lang]);
@@ -489,21 +512,9 @@ function NavLinks({
   }, [location.pathname, location.search]);
 
   // Handle search with preserved underline
-  const handleSearch = (e) => {
+  const handleSearchInternal = (e) => {
     const value = e.target.value;
-    setSearchValue(value);
-
-    const params = new URLSearchParams(location.search);
-    if (value.trim()) {
-      params.set("search", value);
-    } else {
-      params.delete("search");
-    }
-
-    navigate({
-      pathname: "/products",
-      search: params.toString(),
-    });
+    handleSearch(value);
   };
 
   const handleHover = (index) => {
@@ -595,14 +606,13 @@ function NavLinks({
           <input
             type="text"
             value={searchValue}
-            onChange={handleSearch}
+            onChange={handleSearchInternal}
             placeholder={navTexts.searchPlaceholder || "Search products..."}
             className={`
               w-48 pl-10 pr-4 py-2 text-sm rounded-full
-              ${
-                isDark
-                  ? "text-white bg-transparent"
-                  : "text-gray-900 bg-transparent"
+              ${isDark
+                ? "text-white bg-transparent"
+                : "text-gray-900 bg-transparent"
               } 
               transition-colors duration-300
               focus:outline-none
