@@ -1,91 +1,82 @@
-import { createContext, useContext, useReducer, useMemo } from 'react';
+import { createContext, useContext, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 const CartContext = createContext(null);
 
-const initialState = {
-  items: []
+// Get initial state from localStorage with proper error handling
+const getInitialState = () => {
+  try {
+    const savedCart = localStorage.getItem('cart');
+    const parsedCart = savedCart ? JSON.parse(savedCart) : [];
+    return {
+      items: Array.isArray(parsedCart) ? parsedCart : []
+    };
+  } catch (error) {
+    console.error('Error loading cart:', error);
+    return { items: [] };
+  }
 };
 
 function cartReducer(state, action) {
+  let newState;
+
   switch (action.type) {
     case 'ADD_TO_CART': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
-      const items = existingItem
-        ? state.items.map(item =>
+      if (existingItem) {
+        newState = {
+          items: state.items.map(item =>
             item.id === action.payload.id
               ? { ...item, quantity: item.quantity + 1 }
               : item
           )
-        : [...state.items, { ...action.payload, quantity: 1 }];
-      return { ...state, items };
+        };
+      } else {
+        newState = {
+          items: [...state.items, { ...action.payload, quantity: 1 }]
+        };
+      }
+      break;
     }
 
     case 'REMOVE_FROM_CART':
-      return {
-        ...state,
+      newState = {
         items: state.items.filter(item => item.id !== action.payload)
       };
+      break;
 
     case 'UPDATE_QUANTITY':
-      return {
-        ...state,
+      newState = {
         items: state.items.map(item =>
           item.id === action.payload.id
             ? { ...item, quantity: action.payload.quantity }
             : item
         )
       };
+      break;
 
     case 'CLEAR_CART':
-      return initialState;
+      newState = { items: [] };
+      break;
 
     default:
       return state;
   }
+
+  // Save to localStorage after every change
+  localStorage.setItem('cart', JSON.stringify(newState.items));
+  return newState;
 }
 
 export function CartProvider({ children }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
-
-  const cartStats = useMemo(() => ({
-    totalItems: state.items.reduce((sum, item) => sum + item.quantity, 0),
-    totalPrice: state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-    totalWithTax: state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 1.1
-  }), [state.items]);
-
-  const value = useMemo(() => ({
-    state,
-    dispatch,
-    ...cartStats
-  }), [state, cartStats]);
+  const [state, dispatch] = useReducer(cartReducer, getInitialState());
 
   return (
-    <CartContext.Provider value={value}>
+    <CartContext.Provider value={{ state, dispatch }}>
       {children}
     </CartContext.Provider>
   );
 }
-
-CartProvider.propTypes = {
-  children: PropTypes.node.isRequired
-};
-
-// Add type validation for context value
-CartContext.displayName = 'CartContext';
-CartContext.propTypes = {
-  state: PropTypes.shape({
-    items: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      quantity: PropTypes.number.isRequired
-    })).isRequired
-  }).isRequired,
-  dispatch: PropTypes.func.isRequired,
-  totalItems: PropTypes.number.isRequired,
-  totalPrice: PropTypes.number.isRequired
-};
 
 export function useCart() {
   const context = useContext(CartContext);
@@ -94,3 +85,7 @@ export function useCart() {
   }
   return context;
 }
+
+CartProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};

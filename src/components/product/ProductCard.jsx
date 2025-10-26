@@ -108,15 +108,16 @@ export default function ProductCard({
             </span>
           </div>
 
+          {/* Add to Cart Button */}
           <button
-            onClick={handleAddToCart}
-            className={`w-full btn ${
-              isDark 
-                ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                : 'btn-primary'
+            onClick={() => onAddToCart(product)}
+            className={`w-full py-2 rounded-lg transition-colors ${
+              isDark
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
           >
-            {productTexts.addToCart}
+            {translations[lang]?.buttons?.addToCart || 'Add to Cart'}
           </button>
         </div>
       </div>

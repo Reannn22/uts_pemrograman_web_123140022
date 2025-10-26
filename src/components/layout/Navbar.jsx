@@ -99,11 +99,14 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'id');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { totalItems } = useCart();
   const { state: wishlistState } = useWishlist();
   const { state: cartState } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const menuRef = useRef(null);
+  const navbarRef = useRef(null); // Add new ref for navbar
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,7 +154,7 @@ export default function Navbar() {
   const navigationItems = useMemo(() => [
     { path: '/', label: navTexts.home || 'Home' },
     { path: '/products', label: navTexts.products || 'Products' },
-    { path: '/categories', label: navTexts.categories || 'Categories' },
+    { path: '/contact', label: navTexts.contact || 'Contact' },
     { path: '/about', label: navTexts.about || 'About' }
   ], [navTexts]);
 
@@ -159,128 +162,208 @@ export default function Navbar() {
   const totalCartItems = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
   const totalWishlistItems = wishlistState.items.length;
 
+  // Function to check if path is active
+  const isActivePath = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  // Add useEffect for click outside handling
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        menuRef.current && 
+        !menuRef.current.contains(event.target) &&
+        navbarRef.current &&
+        !navbarRef.current.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  // Shared background style for navbar and mobile menu
+  const getBackgroundStyle = (isScrolled, isDark) => {
+    return isScrolled 
+      ? isDark 
+        ? 'bg-gray-900/70 backdrop-blur-md backdrop-saturate-150' 
+        : 'bg-white/70 backdrop-blur-md backdrop-saturate-150'
+      : isDark 
+        ? 'bg-gray-900' 
+        : 'bg-white';
+  };
+
+  // Update the main container and layout
   return (
-    <nav className={`fixed w-full top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? isDark 
-          ? 'bg-gray-900/70 backdrop-blur-md backdrop-saturate-150 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' 
-          : 'bg-white/70 backdrop-blur-md backdrop-saturate-150 shadow-lg'
-        : isDark 
-          ? 'bg-gray-900 shadow-[0_1px_3px_0_rgba(0,0,0,0.3)]' 
-          : 'bg-white shadow-md'
-    }`}>
-      <div className="relative container mx-auto px-6">
-        {/* Main navbar content */}
-        <div className="flex justify-between items-center h-16">
-          {/* Logo - Left */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center gap-2">
-              <Logo isDark={isDark} />
-            </Link>
-          </div>
-          
-          {/* Center section with navigation and search */}
-          <div className="hidden md:flex flex-1 justify-center items-center">
-            <div className="flex items-center space-x-8">
-              <NavLinks totalItems={totalItems} lang={lang} isDark={isDark} />
-            </div>
-          </div>
-
-          {/* Right section with actions */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleThemeChange}
-                className={`p-2 transition-opacity ${
-                  isDark ? 'opacity-70 hover:opacity-100' : 'opacity-70 hover:opacity-100'
-                }`}
-              >
-                <ThemeIcon isDark={isDark} />
-              </button>
-
-              <button
-                onClick={() => handleLanguageChange(lang === 'id' ? 'en' : 'id')}
-                className={`flex items-center gap-1 text-sm transition-opacity ${
-                  isDark ? 'opacity-70 hover:opacity-100' : 'opacity-70 hover:opacity-100'
-                }`}
-              >
-                <LanguageIcon isDark={isDark} />
-                <span className={`uppercase ${isDark ? 'text-white' : 'text-gray-900'}`}>{lang}</span>
-              </button>
-            </div>
-            {/* Divider - Updated with consistent color */}
-            <div className="h-6 w-px bg-gray-400/30"></div>
-            <div className="flex items-center gap-4">
-              <Link to="/wishlist" className={`relative transition-opacity ${
-                isDark ? 'opacity-70 hover:opacity-100' : 'opacity-70 hover:opacity-100'
-              }`}>
-                <HeartIcon isDark={isDark} count={totalWishlistItems} />
-              </Link>
-
-              <Link to="/cart" className={`relative transition-opacity ${
-                isDark ? 'opacity-70 hover:opacity-100' : 'opacity-70 hover:opacity-100'
-              }`}>
-                <CartIcon isDark={isDark} count={totalCartItems} />
+    <>
+      <nav 
+        ref={navbarRef}
+        className={`fixed w-full top-0 left-0 right-0 z-50 ${getBackgroundStyle(isScrolled, isDark)}`}
+      >
+        <div className="relative container mx-auto px-6">
+          {/* Main navbar content */}
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex-shrink-0 min-w-[100px] md:min-w-[120px]">
+              <Link to="/" className="flex items-center gap-2">
+                <Logo isDark={isDark} />
               </Link>
             </div>
-          </div>
-
-          {/* Mobile menu button */}
-          <button 
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <span className="sr-only">Menu</span>
-            <MenuIcon isOpen={isMenuOpen} />
-          </button>
-        </div>
-
-        {/* Mobile Menu - Remove backdrop effects */}
-        <div 
-          className={`md:hidden overflow-hidden transition-all duration-300
-            ${isMenuOpen ? 'max-h-[calc(100vh-4rem)]' : 'max-h-0'}
-          `}
-        >
-          <div className="px-4 py-3 space-y-6">
-            <div className="space-y-1">
-              {navigationItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={({ isActive }) => `
-                    block py-3 transition-colors duration-300 opacity-70 hover:opacity-100
-                    ${isDark 
-                      ? isActive ? 'text-white' : 'text-gray-400 hover:text-white' 
-                      : isActive ? 'text-black' : 'text-gray-600 hover:text-black'
-                    }
-                  `}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={navTexts.searchPlaceholder || 'Search products...'}
-                className={`w-full pl-10 pr-4 py-2 text-sm rounded-full bg-transparent
-                  ${isDark 
-                    ? 'text-white placeholder:text-gray-400/70' 
-                    : 'text-gray-700 placeholder:text-gray-500/70'
-                  } 
-                  opacity-70 hover:opacity-100 focus:opacity-100
-                  outline-none border-0`}
+            
+            {/* Center Navigation */}
+            <div className="hidden lg:flex flex-1 justify-center items-center max-w-[800px]">
+              <NavLinks 
+                isMobile={false}
+                lang={lang}
+                isDark={isDark}
+                setIsDark={setIsDark}
+                isScrolled={isScrolled}
+                isDropdownOpen={isDropdownOpen}
+                setIsDropdownOpen={setIsDropdownOpen}
               />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                <SearchIcon isDark={isDark} />
+            </div>
+
+            {/* Right Actions Group */}
+            <div className="flex items-center">
+              {/* Theme & Language Group */}
+              <div className="flex items-center gap-4 mr-4">
+                <button
+                  onClick={handleThemeChange}
+                  className="p-2 transition-opacity hover:opacity-100 opacity-70"
+                >
+                  <ThemeIcon isDark={isDark} />
+                </button>
+
+                <div className={`h-5 w-px ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`} />
+
+                <button
+                  onClick={() => handleLanguageChange(lang === 'id' ? 'en' : 'id')}
+                  className="flex items-center gap-1 text-sm transition-opacity hover:opacity-100 opacity-70"
+                >
+                  <LanguageIcon isDark={isDark} />
+                  <span className={`uppercase ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {lang}
+                  </span>
+                </button>
+              </div>
+
+              {/* Cart & Wishlist Group */}
+              <div className="flex items-center gap-4">
+                <div className={`h-5 w-px ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                
+                <div className="flex items-center gap-4">
+                  <Link to="/wishlist" className="transition-opacity hover:opacity-100 opacity-70">
+                    <HeartIcon isDark={isDark} count={totalWishlistItems} />
+                  </Link>
+                  
+                  <div className={`h-5 w-px ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                  
+                  <Link to="/cart" className="transition-opacity hover:opacity-100 opacity-70">
+                    <CartIcon isDark={isDark} count={totalCartItems} />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button 
+                className="lg:hidden p-2 ml-4"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                <MenuIcon isOpen={isMenuOpen} />
+              </button>
+            </div>
+          </div>
+
+          {/* Dropdown Menu */}
+          {navigationItems.map((item, index) => (
+            item.hasDropdown && (
+              <div key={item.path}
+                className={`fixed left-0 right-0 z-[100] transition-all duration-300
+                  ${isScrolled
+                    ? isDark 
+                      ? 'bg-gray-900/70 backdrop-blur-md backdrop-saturate-150 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' 
+                      : 'bg-white/70 backdrop-blur-md backdrop-saturate-150 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'
+                    : isDark
+                      ? 'bg-gray-900 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]'
+                      : 'bg-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'
+                  }`}
+                style={{ top: '64px' }}
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                {/* Dropdown content here */}
+              </div>
+            )
+          ))}
+        </div>
+      </nav>
+
+      {/* Mobile Menu - Moved outside of nav */}
+      {isMenuOpen && (
+        <>
+          <div className="lg:hidden fixed inset-0 bg-black/20 z-40" />
+          <div 
+            ref={menuRef}
+            className="lg:hidden fixed left-0 right-0 z-50"
+            style={{ top: '64px' }}
+          >
+            <div className={`px-4 py-4 ${getBackgroundStyle(isScrolled, isDark)}`}>
+              {/* Navigation Links */}
+              <div className="space-y-2">
+                {navigationItems.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`
+                      block px-4 py-2 transition-colors
+                      ${isDark 
+                        ? 'text-gray-400 hover:text-white'
+                        : 'text-gray-600 hover:text-gray-900'
+                      }
+                    `}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+
+              {/* Search Bar for Mobile - Simplified */}
+              <div className="mt-4 px-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder={navTexts.searchPlaceholder || 'Search products...'}
+                    className={`
+                      w-full pl-10 pr-4 py-2 text-sm rounded-lg
+                      ${isDark 
+                        ? 'text-white bg-transparent border-gray-700' 
+                        : 'text-gray-900 bg-transparent border-gray-200'
+                      }
+                      border focus:outline-none
+                      placeholder:text-gray-400
+                    `}
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                    <SearchIcon isDark={isDark} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </nav>
+        </>
+      )}
+    </>
   );
 }
 
@@ -300,38 +383,80 @@ function MenuIcon({ isOpen }) {
   );
 }
 
-function NavLinks({ totalItems, wishlistCount = 0, isMobile = false, lang, isDark }) {
+function NavLinks({ isMobile = false, lang, isDark, setIsDark, onMenuClose, isScrolled, isDropdownOpen, setIsDropdownOpen }) {
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
-  const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [searchValue, setSearchValue] = useState('');
   const itemRefs = useRef([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
+  // Add navTexts and navigationItems definitions
+  const navTexts = translations[lang]?.navigation || {};
+  const navigationItems = useMemo(() => [
+    { path: '/', label: navTexts.home || 'Home' },
+    { path: '/products', label: navTexts.products || 'Products' },
+    { path: '/contact', label: navTexts.contact || 'Contact' },
+    { path: '/about', label: navTexts.about || 'About' }
+  ], [navTexts]);
+
+  // Function to get active index based on current path
+  const getActiveIndex = (path) => {
+    if (path.startsWith('/products') || path.includes('search=')) return 1;
+    if (path.startsWith('/contact')) return 2;
+    if (path.startsWith('/about')) return 3;
+    return path === '/' ? 0 : -1;
+  };
+
+  // Get current active index
+  const activeIndex = getActiveIndex(location.pathname + location.search);
+
+  // Update underline on path change
   useEffect(() => {
-    const activeItem = itemRefs.current[activeIndex];
-    if (activeItem) {
-      // Get the text content width instead of full element width
+    const newActiveIndex = getActiveIndex(location.pathname + location.search);
+    if (newActiveIndex !== -1 && itemRefs.current[newActiveIndex]) {
+      const activeItem = itemRefs.current[newActiveIndex];
       const textWidth = activeItem.firstChild.getBoundingClientRect().width;
       setUnderlineStyle({
         width: textWidth,
         left: activeItem.offsetLeft + (activeItem.offsetWidth - textWidth) / 2
       });
     }
-  }, [activeIndex]);
+  }, [location.pathname, location.search]);
+
+  // Handle search with preserved underline
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    
+    const params = new URLSearchParams(location.search);
+    if (value.trim()) {
+      params.set('search', value);
+    } else {
+      params.delete('search');
+    }
+    
+    navigate({
+      pathname: '/products',
+      search: params.toString()
+    });
+  };
 
   const handleHover = (index) => {
     const item = itemRefs.current[index];
-    const textWidth = item.firstChild.getBoundingClientRect().width;
-    setUnderlineStyle({
-      width: textWidth,
-      left: item.offsetLeft + (item.offsetWidth - textWidth) / 2
-    });
-    setHoveredIndex(index);
+    if (item) {
+      const textWidth = item.firstChild.getBoundingClientRect().width;
+      setUnderlineStyle({
+        width: textWidth,
+        left: item.offsetLeft + (item.offsetWidth - textWidth) / 2
+      });
+      setHoveredIndex(index);
+    }
   };
 
   const handleLeave = () => {
-    const activeItem = itemRefs.current[activeIndex];
-    if (activeItem) {
+    if (activeIndex !== -1 && itemRefs.current[activeIndex]) {
+      const activeItem = itemRefs.current[activeIndex];
       const textWidth = activeItem.firstChild.getBoundingClientRect().width;
       setUnderlineStyle({
         width: textWidth,
@@ -341,38 +466,25 @@ function NavLinks({ totalItems, wishlistCount = 0, isMobile = false, lang, isDar
     setHoveredIndex(null);
   };
 
-  const navTexts = translations[lang]?.navigation || {};
-  const navigationItems = useMemo(() => [
-    { path: '/', label: navTexts.home || 'Home' },
-    { path: '/products', label: navTexts.products || 'Products' },
-    { path: '/categories', label: navTexts.categories || 'Categories' },
-    { path: '/about', label: navTexts.about || 'About' }
-  ], [navTexts]);
-
   return (
     <div className={`relative ${isMobile ? 'flex flex-col space-y-4 w-full' : 'flex items-center gap-4'}`}>
-      {/* Sliding underline */}
+      {/* Tetap pertahankan underline dengan warna yang sama */}
       {!isMobile && (
         <div 
-          className={`absolute bottom-0 h-0.5 transition-all duration-300 ease-out`}
+          className={`absolute bottom-0 h-0.5 transition-all duration-300 ease-out ${
+            isDark ? 'bg-white' : 'bg-gray-900'
+          }`}
           style={{
             width: `${underlineStyle.width}px`,
             left: `${underlineStyle.left}px`,
-            backgroundColor: isDark 
-              ? (hoveredIndex !== null || location.pathname === navigationItems[activeIndex].path)
-                ? 'rgb(255, 255, 255)' // white
-                : 'rgb(156, 163, 175)' // gray-400
-              : (hoveredIndex !== null || location.pathname === navigationItems[activeIndex].path)
-                ? 'rgb(97, 97, 97)' // black
-                : 'rgb(107, 114, 128)' // gray-500
           }}
         />
       )}
 
-      {/* Navigation Links */}
+      {/* Navigation Links dengan perilaku hover yang diperbarui */}
       <div className="flex items-center space-x-8">
         {navigationItems.map((item, index) => {
-          const isCurrentPath = location.pathname === item.path;
+          const isActive = index === activeIndex;
           const isHovered = hoveredIndex === index;
           
           return (
@@ -383,13 +495,20 @@ function NavLinks({ totalItems, wishlistCount = 0, isMobile = false, lang, isDar
               onMouseLeave={() => !isMobile && handleLeave()}
               to={item.path} 
               className={`
-                relative py-2 px-1 transition-all duration-300
+                relative py-2 px-1 transition-colors duration-300
                 ${isDark 
-                  ? isCurrentPath || isHovered ? 'text-white' : 'text-gray-400'
-                  : isCurrentPath || isHovered ? 'text-black' : 'text-gray-500'
+                  ? isHovered 
+                    ? 'text-white' 
+                    : isActive 
+                      ? hoveredIndex === null ? 'text-white' : 'text-gray-400'
+                      : 'text-gray-400'
+                  : isHovered
+                    ? 'text-gray-900'
+                    : isActive
+                      ? hoveredIndex === null ? 'text-gray-900' : 'text-gray-500'
+                      : 'text-gray-500'
                 }
               `}
-              onClick={() => setActiveIndex(index)}
             >
               <span>{item.label}</span>
             </NavLink>
@@ -397,21 +516,28 @@ function NavLinks({ totalItems, wishlistCount = 0, isMobile = false, lang, isDar
         })}
       </div>
 
-      {/* Search Bar - Updated default color */}
+      {/* Search Bar dengan background transparan */}
       <div className="relative ml-8">
         <div className="relative flex items-center group">
           <input
             type="text"
+            value={searchValue}
+            onChange={handleSearch}
             placeholder={navTexts.searchPlaceholder || 'Search products...'}
-            className={`w-48 pl-10 pr-4 py-2 text-sm rounded-full
+            className={`
+              w-48 pl-10 pr-4 py-2 text-sm rounded-full
               ${isDark 
-                ? 'bg-transparent text-gray-200 placeholder:text-gray-100/90 hover:text-white focus:text-white' 
-                : 'bg-transparent text-gray-700 placeholder:text-gray-900/90 hover:text-black focus:text-black'
+                ? 'text-white bg-transparent' 
+                : 'text-gray-900 bg-transparent'
               } 
-              opacity-70 hover:opacity-100 focus:opacity-100
-              outline-none border-0 transition-colors duration-300`}
+              transition-colors duration-300
+              focus:outline-none
+              placeholder:text-gray-400
+              hover:placeholder:text-gray-400
+              focus:placeholder:text-gray-400
+            `}
           />
-          <div className="absolute left-3 text-gray-400 pointer-events-none">
+          <div className="absolute left-3 pointer-events-none">
             <SearchIcon isDark={isDark} />
           </div>
         </div>
@@ -425,7 +551,9 @@ NavLinks.propTypes = {
   wishlistCount: PropTypes.number,
   isMobile: PropTypes.bool,
   lang: PropTypes.oneOf(['id', 'en']).isRequired,
-  isDark: PropTypes.bool.isRequired
+  isDark: PropTypes.bool.isRequired,
+  isDropdownOpen: PropTypes.bool.isRequired,
+  setIsDropdownOpen: PropTypes.func.isRequired
 };
 
 LanguageIcon.propTypes = {

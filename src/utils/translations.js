@@ -18,7 +18,24 @@ export const translations = {
       addToCart: 'Tambah ke Keranjang',
       rating: 'Rating'
     },
-    categories: 'Kategori',
+    categories: {
+      smartphones: 'Ponsel Pintar',
+      laptops: 'Laptop',
+      fragrances: 'Parfum',
+      skincare: 'Perawatan Kulit',
+      groceries: 'Kebutuhan Sehari-hari',
+      'home-decoration': 'Dekorasi Rumah',
+      furniture: 'Furnitur',
+      tops: 'Atasan',
+      'womens-dresses': 'Gaun Wanita',
+      'womens-shoes': 'Sepatu Wanita',
+      'mens-shirts': 'Kemeja Pria',
+      'mens-shoes': 'Sepatu Pria',
+      'mens-watches': 'Jam Tangan Pria',
+      'womens-watches': 'Jam Tangan Wanita',
+      'womens-bags': 'Tas Wanita',
+      sunglasses: 'Kacamata'
+    },
     about: 'Tentang',
     cart: 'Keranjang',
     wishlist: 'Favorit',
@@ -50,9 +67,13 @@ export const translations = {
       rating: 'Rating',
       foundProducts: 'Ditemukan',
       averagePrice: 'Rata-rata Harga',
-      averageRating: 'Rating Rata-rata'
+      averageRating: 'Rating Rata-rata',
+      pagination: {
+        previous: 'Sebelumnya',
+        next: 'Berikutnya'
+      }
     },
-    about: {
+    aboutPage: {
       title: 'Tentang ShoPPie',
       description: 'ShoPPie adalah platform e-commerce modern yang dirancang untuk memberikan pengalaman berbelanja yang mulus.',
       features: {
@@ -113,7 +134,24 @@ export const translations = {
       addToCart: 'Add to Cart',
       rating: 'Rating'
     },
-    categories: 'Categories',
+    categories: {
+      smartphones: 'Smartphones',
+      laptops: 'Laptops',
+      fragrances: 'Fragrances',
+      skincare: 'Skincare',
+      groceries: 'Groceries',
+      'home-decoration': 'Home Decoration',
+      furniture: 'Furniture',
+      tops: 'Tops',
+      'womens-dresses': "Women's Dresses",
+      'womens-shoes': "Women's Shoes",
+      'mens-shirts': "Men's Shirts",
+      'mens-shoes': "Men's Shoes",
+      'mens-watches': "Men's Watches",
+      'womens-watches': "Women's Watches",
+      'womens-bags': "Women's Bags",
+      sunglasses: 'Sunglasses'
+    },
     about: 'About',
     cart: 'Cart',
     wishlist: 'Wishlist',
@@ -145,9 +183,13 @@ export const translations = {
       rating: 'Rating',
       foundProducts: 'Found',
       averagePrice: 'Average Price',
-      averageRating: 'Average Rating'
+      averageRating: 'Average Rating',
+      pagination: {
+        previous: 'Previous',
+        next: 'Next'
+      }
     },
-    about: {
+    aboutPage: {
       title: 'About ShoPPie',
       description: 'ShoPPie is a modern e-commerce platform designed to provide users with a seamless shopping experience.',
       features: {

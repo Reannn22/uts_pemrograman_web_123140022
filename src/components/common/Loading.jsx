@@ -1,16 +1,15 @@
 import PropTypes from 'prop-types';
 
 export default function Loading({ size = 'md', className = '' }) {
-  const sizeClasses = {
+  const sizeClass = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
     lg: 'h-12 w-12'
-  };
+  }[size];
 
   return (
     <div className={`flex justify-center items-center p-4 ${className}`}>
-      <div
-      />
+
     </div>
   );
 }

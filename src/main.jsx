@@ -29,9 +29,9 @@ function AppContent() {
   const { isDark } = useTheme();
   
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={isDark ? 'bg-gray-900' : 'bg-gray-800'}>
       <div className={`flex flex-col min-h-screen transition-colors duration-500 ${
-        isDark ? 'text-white' : 'text-gray-900'
+        isDark ? 'text-white bg-gray-900' : 'text-gray-100 bg-gray-800'
       }`}>
         <Navbar />
         <main className="flex-grow mt-16">

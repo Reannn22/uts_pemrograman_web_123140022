@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useCart } from '../../context/CartContext';
 
-export default function CartItem({ item }) {
+export default function CartItem({ item, isDark }) {
   const { dispatch } = useCart();
 
   const updateQuantity = (quantity) => {
@@ -10,30 +10,52 @@ export default function CartItem({ item }) {
   };
 
   return (
-    <div className="flex items-center gap-4 p-4 border-b">
+    <div className={`flex items-center gap-4 p-4 rounded-lg border ${
+      isDark 
+        ? 'bg-gray-800 border-gray-700' 
+        : 'bg-white border-gray-200'
+    }`}>
       <img src={item.thumbnail} alt={item.title} className="w-20 h-20 object-cover rounded" />
       <div className="flex-grow">
-        <h3 className="font-medium">{item.title}</h3>
-        <p className="text-gray-600">${item.price}</p>
+        <h3 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          {item.title}
+        </h3>
+        <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+          ${item.price.toFixed(2)}
+        </p>
       </div>
       <div className="flex items-center gap-2">
         <button 
           onClick={() => updateQuantity(item.quantity - 1)}
-          className="btn btn-secondary px-2 py-1"
+          className={`px-2 py-1 rounded transition-colors ${
+            isDark 
+              ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+          }`}
         >
           -
         </button>
-        <span className="w-8 text-center">{item.quantity}</span>
+        <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+          {item.quantity}
+        </span>
         <button 
           onClick={() => updateQuantity(item.quantity + 1)}
-          className="btn btn-secondary px-2 py-1"
+          className={`px-2 py-1 rounded transition-colors ${
+            isDark 
+              ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+          }`}
         >
           +
         </button>
       </div>
       <button 
         onClick={() => dispatch({ type: 'REMOVE_FROM_CART', payload: item.id })}
-        className="text-red-500 hover:text-red-700"
+        className={`transition-colors ${
+          isDark 
+            ? 'text-red-400 hover:text-red-300' 
+            : 'text-red-500 hover:text-red-700'
+        }`}
       >
         Remove
       </button>
@@ -54,5 +76,6 @@ CartItem.propTypes = {
     category: PropTypes.string
   }).isRequired,
   onUpdateQuantity: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired
+  onRemove: PropTypes.func.isRequired,
+  isDark: PropTypes.bool.isRequired
 };

@@ -36,8 +36,8 @@ export default function Footer({ authorName = "Reyhan Capri Moraga", nim = "1231
 
   const shopLinks = [
     { to: '/products', text: t.allProducts },
-    { to: '/categories', text: t.categories },
-    { to: '/search', text: t.search },
+    { to: '/products', text: t.search },
+    { to: '/cart', text: t.cart },
     { to: '/wishlist', text: t.wishlist }
   ];
 
@@ -71,7 +71,7 @@ export default function Footer({ authorName = "Reyhan Capri Moraga", nim = "1231
     <footer className={`relative transition-all duration-300 ${
       isDark 
         ? 'bg-black shadow-[0_-1px_15px_rgb(0,0,0,0.4)]' 
-        : 'bg-white/70 backdrop-blur-md backdrop-saturate-150 shadow-lg-up'
+        : 'bg-white shadow-[0_-1px_15px_rgb(0,0,0,0.1)]'
     }`}>
       <div className="relative container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-x-12 gap-y-8">
@@ -109,8 +109,8 @@ export default function Footer({ authorName = "Reyhan Capri Moraga", nim = "1231
               isDark ? 'text-white' : 'text-gray-900'
             }`}>{t.connect}</h3>
             <div className="flex space-x-4 mb-6">
-              <SocialIcon href="https://github.com" icon={githubIcon} isDark={isDark} />
-              <SocialIcon href="https://linkedin.com" icon={linkedinIcon} isDark={isDark} />
+              <SocialIcon href="https://github.com/Reannn22" icon={githubIcon} isDark={isDark} />
+              <SocialIcon href="https://linkedin.com/reyhan-capri-moraga" icon={linkedinIcon} isDark={isDark} />
             </div>
             <div className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               {t.created} {authorName} <span className="opacity-75">({nim})</span>
