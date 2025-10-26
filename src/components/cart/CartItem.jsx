@@ -27,7 +27,7 @@ export default function CartItem({ item, isDark }) {
       <div className="flex items-center gap-2">
         <button 
           onClick={() => updateQuantity(item.quantity - 1)}
-          className={`px-2 py-1 rounded transition-colors ${
+          className={`px-2 py-1 rounded ${
             isDark 
               ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
               : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -40,7 +40,7 @@ export default function CartItem({ item, isDark }) {
         </span>
         <button 
           onClick={() => updateQuantity(item.quantity + 1)}
-          className={`px-2 py-1 rounded transition-colors ${
+          className={`px-2 py-1 rounded ${
             isDark 
               ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
               : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
