@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 import { useMemo, useCallback } from "react"; // NEW: Add hooks
 import { translations } from "../../utils/translations";
@@ -12,7 +11,6 @@ export default function ProductCard({
   isDark = false,
   onQuickView = undefined,
 }) {
-  const { dispatch } = useCart();
   const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist();
   const isWishlisted = wishlistState.items.some(
     (item) => item.id === product.id
@@ -25,11 +23,6 @@ export default function ProductCard({
       : product.price;
   }, [product.price, product.discountPercentage]);
 
-  // NEW: Memoize add to cart handler
-  const handleAddToCart = useCallback(() => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
-  }, [dispatch, product]);
-
   const toggleWishlist = useCallback(
     (e) => {
       e.preventDefault();
@@ -41,8 +34,6 @@ export default function ProductCard({
     },
     [isWishlisted, product, wishlistDispatch]
   );
-
-  const productTexts = translations[lang].products || {};
 
   return (
     <div

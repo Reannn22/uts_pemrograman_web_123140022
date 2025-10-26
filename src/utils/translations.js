@@ -39,25 +39,27 @@ export const translations = {
     about: 'Tentang',
     cart: 'Keranjang',
     wishlist: 'Favorit',
+    buttons: {
+      addToCart: 'Tambah ke Keranjang'
+    },
     footer: {
+      about: {
+        title: 'ShoPPie',
+        description: 'ShoPPie adalah platform e-commerce yang menyediakan berbagai produk berkualitas dengan harga terbaik. Kami berkomitmen memberikan pengalaman belanja online yang aman dan nyaman.'
+      },
       shop: 'Toko',
-      account: 'Akun',
-      information: 'Informasi',
-      connect: 'Hubungi Kami',
       allProducts: 'Semua Produk',
-      categories: 'Kategori',
       search: 'Pencarian',
+      cart: 'Keranjang',
       wishlist: 'Favorit',
-      profile: 'Profil Saya',
-      orders: 'Riwayat Pesanan',
-      checkout: 'Pembayaran',
-      compare: 'Bandingkan',
-      about: 'Tentang Kami',
-      contact: 'Kontak',
+      information: 'Informasi',
+      aboutUs: 'Tentang Kami',
+      contact: 'Hubungi Kami',
       privacy: 'Kebijakan Privasi',
       terms: 'Syarat & Ketentuan',
-      rights: 'Hak Cipta',
-      created: 'Dibuat oleh'
+      connect: 'Hubungi Kami',
+      created: 'Dibuat oleh',
+      rights: 'Hak Cipta Dilindungi'
     },
     productPage: {
       searchPlaceholder: 'Cari produk...',
@@ -155,25 +157,27 @@ export const translations = {
     about: 'About',
     cart: 'Cart',
     wishlist: 'Wishlist',
+    buttons: {
+      addToCart: 'Add to Cart'
+    },
     footer: {
+      about: {
+        title: 'ShoPPie',
+        description: 'ShoPPie is an e-commerce platform providing various quality products at the best prices. We are committed to providing a safe and comfortable online shopping experience.'
+      },
       shop: 'Shop',
-      account: 'Account',
-      information: 'Information',
-      connect: 'Connect',
       allProducts: 'All Products',
-      categories: 'Categories',
       search: 'Search',
+      cart: 'Cart',
       wishlist: 'Wishlist',
-      profile: 'My Profile',
-      orders: 'Order History',
-      checkout: 'Checkout',
-      compare: 'Compare',
-      about: 'About Us',
-      contact: 'Contact',
+      information: 'Information',
+      aboutUs: 'About Us',
+      contact: 'Contact Us',
       privacy: 'Privacy Policy',
       terms: 'Terms of Service',
-      rights: 'All rights reserved',
-      created: 'Created by'
+      connect: 'Connect With Us',
+      created: 'Created by',
+      rights: 'All Rights Reserved'
     },
     productPage: {
       searchPlaceholder: 'Search products...',

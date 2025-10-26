@@ -1,11 +1,14 @@
-# React E-Commerce UTS
+# ShoPPie - E-Commerce Web Application
 
-UTS Pemrograman Web - React E-commerce application using DummyJSON API
+UTS Pemrograman Web - Modern E-commerce application built with React and DummyJSON API
 
-## Author
+## Live Demo
+[https://uts-pemrograman-web-123140022.vercel.app/](https://uts-pemrograman-web-123140022.vercel.app/)
 
-- Nama: Reyhan Capri Moraga
-- NIM: 123140022
+## Author Information
+- **Name:** Reyhan Capri Moraga 
+- **NIM:** 123140022
+- **Class:** Pemrograman Web
 
 ## Tech Stack
 
@@ -23,89 +26,176 @@ UTS Pemrograman Web - React E-commerce application using DummyJSON API
 - Responsive navbar with glass effect
 - Loading states & error handling
 - Mobile-friendly design
+- Dark/Light theme toggle
+- Multilingual support (ID/EN)
+- Wishlist functionality
 
-## Installation & Setup
+## Installation
 
-1. Clone the repository:
-
+1. Clone repository:
 ```bash
 git clone https://github.com/yourusername/uts_pemrograman_web_123140022.git
 cd uts_pemrograman_web_123140022
 ```
 
 2. Install dependencies:
-
 ```bash
 npm install
 ```
 
 3. Run development server:
-
 ```bash
 npm start
 ```
 
 4. Build for production:
-
 ```bash
 npm run build
 ```
 
 ## Project Structure
 
-```
-src/
-├── assets/        # Static assets
-├── components/    # Reusable components
-│   ├── cart/     # Cart related components
-│   ├── common/   # Common UI components
-│   ├── layout/   # Layout components
-│   └── product/  # Product related components
-├── context/      # Context providers
-├── hooks/        # Custom React hooks
-├── pages/        # Page components
-├── services/     # API services
-└── utils/        # Utility functions
-```
+### Assets (`/src/assets`)
+
+#### Icons (`/icon`)
+- `arrow-right.svg` - Navigation arrow
+- `chevron-left.svg` - Previous item navigation
+- `chevron-right.svg` - Next item navigation
+- `github.svg` - GitHub social link
+- `heart.svg` - Wishlist icon
+- `languages.svg` - Language selector
+- `linkedin.svg` - LinkedIn social link
+- `moon.svg` - Dark theme toggle
+- `search.svg` - Search functionality
+- `shopping-cart.svg` - Cart icon
+- `sun.svg` - Light theme toggle
+
+#### Logo (`/logo`)
+- `ShoPPie.png` - Main application logo
+
+### Components (`/src/components`)
+
+#### Cart Components (`/cart`)
+- `CartItem.jsx` - Individual cart item display
+- `CartSummary.jsx` - Cart totals and checkout
+
+#### Common Components (`/common`)
+- `ErrorMessage.jsx` - Error state handling
+- `Loading.jsx` - Loading state indicators
+
+#### Layout Components (`/layout`)
+- `Footer.jsx` - Site footer
+- `Navbar.jsx` - Navigation header
+
+#### Product Components (`/product`)
+- `ProductCard.jsx` - Product grid item
+
+### Context (`/src/context`)
+- `CartContext.jsx` - Shopping cart state
+- `ThemeContext.jsx` - Theme preferences
+- `WishlistContext.jsx` - Wishlist management
+
+### Hooks (`/src/hooks`)
+- `useDebounce.js` - Input debouncing
+- `useFetch.js` - Data fetching
+- `useFormRef.js` - Form references
+- `useScroll.js` - Scroll position
+
+### Pages (`/src/pages`)
+- `AboutPage.jsx` - About information
+- `CartPage.jsx` - Shopping cart view
+- `ContactPage.jsx` - Contact form
+- `HomePage.jsx` - Landing page
+- `NotFoundPage.jsx` - 404 handler
+- `PrivacyPage.jsx` - Privacy policy
+- `ProductDetailPage.jsx` - Product details
+- `ProductsPage.jsx` - Products listing
+- `TermsPage.jsx` - Terms of service
+- `WishlistPage.jsx` - Saved items
+
+### Services (`/src/services`)
+- `dummyApi.js` - API integration
+
+### Utils (`/src/utils`)
+- `constants.js` - App constants
+- `translations.js` - i18n strings
+
+### Root Files
+- `index.css` - Global styles
+- `index.js` - Entry point
+- `main.jsx` - App initialization
 
 ## Detailed Project Structure
 
-```
-src/
-├── assets/                    # Static assets and images
-├── components/               # Reusable UI components
-│   ├── cart/                # Cart related components
-│   │   ├── CartItem.jsx    # Individual cart item component
-│   │   └── CartSummary.jsx # Cart total and checkout summary
-│   ├── common/             # Shared UI components
-│   │   ├── ErrorMessage.jsx # Error state display
-│   │   └── Loading.jsx     # Loading spinner/states
-│   ├── layout/             # Layout components
-│   │   ├── Footer.jsx     # Site footer with author info
-│   │   └── Navbar.jsx     # Navigation with glass effect
-│   └── product/           # Product related components
-│       └── ProductCard.jsx # Product display card
-├── context/               # React Context providers
-│   └── CartContext.jsx   # Shopping cart state management
-├── hooks/                # Custom React hooks
-│   ├── useDebounce.js   # Debouncing user input
-│   ├── useFetch.js      # Data fetching with loading states
-│   ├── useFormRef.js    # Form input references
-│   └── useScroll.js     # Scroll position detection
-├── pages/                # Route components
-│   ├── CartPage.jsx     # Shopping cart view
-│   ├── HomePage.jsx     # Landing page
-│   ├── NotFoundPage.jsx # 404 error page
-│   ├── ProductDetailPage.jsx # Single product view
-│   └── ProductsPage.jsx # Products listing
-├── services/            # API and external services
-│   └── dummyApi.js     # DummyJSON API integration
-├── utils/              # Utility functions and constants
-│   └── constants.js    # API endpoints and config
-├── index.css          # Global styles and Tailwind
-├── index.js          # App entry point
-└── main.jsx         # Root component and routing
-```
+### Assets (`/src/assets`)
+
+#### Icons (`/icon`)
+- `arrow-right.svg` - Navigation arrow
+- `chevron-left.svg` - Previous item navigation
+- `chevron-right.svg` - Next item navigation
+- `github.svg` - GitHub social link
+- `heart.svg` - Wishlist icon
+- `languages.svg` - Language selector
+- `linkedin.svg` - LinkedIn social link
+- `moon.svg` - Dark theme toggle
+- `search.svg` - Search functionality
+- `shopping-cart.svg` - Cart icon
+- `sun.svg` - Light theme toggle
+
+#### Logo (`/logo`)
+- `ShoPPie.png` - Main application logo
+
+### Components (`/src/components`)
+
+#### Cart Components (`/cart`)
+- `CartItem.jsx` - Individual cart item display
+- `CartSummary.jsx` - Cart totals and checkout
+
+#### Common Components (`/common`)
+- `ErrorMessage.jsx` - Error state handling
+- `Loading.jsx` - Loading state indicators
+
+#### Layout Components (`/layout`)
+- `Footer.jsx` - Site footer
+- `Navbar.jsx` - Navigation header
+
+#### Product Components (`/product`)
+- `ProductCard.jsx` - Product grid item
+
+### Context (`/src/context`)
+- `CartContext.jsx` - Shopping cart state
+- `ThemeContext.jsx` - Theme preferences
+- `WishlistContext.jsx` - Wishlist management
+
+### Hooks (`/src/hooks`)
+- `useDebounce.js` - Input debouncing
+- `useFetch.js` - Data fetching
+- `useFormRef.js` - Form references
+- `useScroll.js` - Scroll position
+
+### Pages (`/src/pages`)
+- `AboutPage.jsx` - About information
+- `CartPage.jsx` - Shopping cart view
+- `ContactPage.jsx` - Contact form
+- `HomePage.jsx` - Landing page
+- `NotFoundPage.jsx` - 404 handler
+- `PrivacyPage.jsx` - Privacy policy
+- `ProductDetailPage.jsx` - Product details
+- `ProductsPage.jsx` - Products listing
+- `TermsPage.jsx` - Terms of service
+- `WishlistPage.jsx` - Saved items
+
+### Services (`/src/services`)
+- `dummyApi.js` - API integration
+
+### Utils (`/src/utils`)
+- `constants.js` - App constants
+- `translations.js` - i18n strings
+
+### Root Files
+- `index.css` - Global styles
+- `index.js` - Entry point
+- `main.jsx` - App initialization
 
 ## Component Details
 
@@ -167,83 +257,23 @@ src/
   - Search functionality
   - Error handling
 
-## Screenshots
+## Routes
+- `/` - Homepage with featured products
+- `/products` - Product listing and search
+- `/product/:id` - Product details
+- `/cart` - Shopping cart
+- `/wishlist` - Saved items
+- `/about` - About information
+- `/contact` - Contact form
+- `/privacy` - Privacy policy
+- `/terms` - Terms of service
 
-### Homepage
-
-![Homepage](screenshots/homepage.png)
-
-- Hero section with featured products
-- Product grid layout
-- Quick add to cart functionality
-
-### Products Page
-
-![Products](screenshots/products.png)
-
+## API Integration
+Uses DummyJSON API (https://dummyjson.com) for:
+- Product catalog
+- Product details
 - Search functionality
-- Filter by category
-- Sort by price/rating
-- Product cards with details
+- Category filtering
 
-### Product Detail
-
-![Product Detail](screenshots/product-detail.png)
-
-- Product images
-- Detailed description
-- Add to cart with quantity selector
-
-### Shopping Cart
-
-![Shopping Cart](screenshots/cart.png)
-
-- Cart items list
-- Quantity adjustment
-- Price calculations
-- Remove items functionality
-
-### Mobile View
-
-![Mobile Navigation](screenshots/mobile.png)
-
-- Responsive design
-- Mobile-friendly navigation
-- Adaptive layout
-
-## Key Implementation Details
-
-### State Management
-
-- Using Context API for global cart state
-- Custom hooks for data fetching and UI state
-
-### API Integration
-
-- DummyJSON API for product data
-- Error handling and loading states
-- Data caching implementation
-
-### UI/UX Features
-
-- Liquid glass effect on navbar scroll
-- Smooth animations and transitions
-- Responsive design breakpoints
-- Loading skeletons
-
-## Deployment
-
-This project is deployed on Vercel. You can visit the live site at:
-[https://your-vercel-deployment-url.vercel.app](https://your-vercel-deployment-url.vercel.app)
-
-## Development Notes
-
-Make sure to create a `screenshots` directory in your project root and add the following screenshots:
-
-1. Homepage with featured products
-2. Products page with filters
-3. Product detail page
-4. Shopping cart page
-5. Mobile responsive view
-
-Screenshots should clearly demonstrate the key features and UI components of your application.
+## License
+This project is MIT licensed.
