@@ -138,7 +138,7 @@ export default function Footer({
                 isDark={isDark}
               />
               <SocialIcon
-                href="https://linkedin.com/reyhan-capri-moraga"
+                href="https://www.linkedin.com/in/reyhancm/"
                 icon={linkedinIcon}
                 isDark={isDark}
               />
